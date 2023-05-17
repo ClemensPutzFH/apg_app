@@ -1,11 +1,15 @@
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:settings_ui/settings_ui.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'benachrichtigungstext.dart';
 import 'information.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
+late SharedPreferences prefs;
 
 class Benachrichtigungen extends StatefulWidget {
   const Benachrichtigungen({super.key});
@@ -15,6 +19,12 @@ class Benachrichtigungen extends StatefulWidget {
 }
 
 class _BenachrichtigungenState extends State<Benachrichtigungen> {
+  @override
+  Future<void> initState() async {
+    prefs = await SharedPreferences.getInstance();
+    super.initState();
+  }
+
   bool isNotificationOn = false;
   @override
   Widget build(BuildContext context) {
@@ -28,16 +38,15 @@ class _BenachrichtigungenState extends State<Benachrichtigungen> {
           tiles: [
             SettingsTile.switchTile(
                 initialValue: isNotificationOn,
-                onToggle: (value) {
+                onToggle: (value) async {
                   setState(() {
                     isNotificationOn = value;
                   });
 
                   if (value) {
-                    Workmanager().registerPeriodicTask(
-                        "task-identifier", "simpleTask",
-                        frequency: Duration(minutes: 16));
+                    FlutterBackgroundService().invoke("setAsBackground");
 
+                    /*
                     AwesomeNotifications().createNotification(
                         content: NotificationContent(
                             id: 10,
@@ -48,6 +57,8 @@ class _BenachrichtigungenState extends State<Benachrichtigungen> {
                             actionType: ActionType.Default),
                         schedule: NotificationCalendar.fromDate(
                             date: DateTime.now().add(Duration(seconds: 10))));
+
+                            */
                   }
                 },
                 title: Text("Benachrichtigungen")),

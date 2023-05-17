@@ -1,40 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'ampel.dart';
 import 'benachrichtigungen.dart';
 import 'information.dart';
 import 'prognose.dart';
+import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 late SpitzenStundenObject spitzenStundenData;
-
-void callBackDispatcher() {
-  Workmanager().executeTask((taskName, inputData) {
-    /*
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Spitzenstunde voraus!',
-            body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
-            actionType: ActionType.Default),
-        schedule: NotificationCalendar.fromDate(
-            date: DateTime.now().add(Duration(seconds: 10))));
-            */
-
-    print("Task execution" + taskName);
-    if (DateTime.now().hour < 4 && DateTime.now().hour > 2) {
-      fetchApgSpitzenApi();
-    }
-    return Future.value(true);
-  });
-}
 
 void main() async {
   AwesomeNotifications().initialize(
@@ -57,8 +39,7 @@ void main() async {
       ],
       debug: true);
 
-  await WidgetsFlutterBinding.ensureInitialized();
-  Workmanager().initialize(callBackDispatcher);
+  await inizializeService();
 
   runApp(const MyApp());
 }
@@ -352,4 +333,65 @@ class StatusInfos {
     data['s'] = this.status;
     return data;
   }
+}
+
+Future<void> inizializeService() async {
+  final service = FlutterBackgroundService();
+  await service.configure(
+      iosConfiguration: IosConfiguration(
+          autoStart: true,
+          onForeground: onStart,
+          onBackground: onIosBackground),
+      androidConfiguration: AndroidConfiguration(
+          onStart: onStart, isForegroundMode: true, autoStart: true));
+}
+
+@pragma('vm:entry-point')
+Future<bool> onIosBackground(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  return true;
+}
+
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+  if (service is AndroidServiceInstance) {
+    service.on('setAsForeground').listen((event) {
+      service.setAsForegroundService();
+    });
+    service.on('setAsBackground').listen((event) {
+      service.setAsBackgroundService();
+    });
+  }
+  service.on('sopService').listen((event) {
+    service.stopSelf();
+  });
+
+  Timer.periodic(const Duration(seconds: 10), (timer) async {
+    if (service is AndroidServiceInstance) {
+      if (await service.isForegroundService()) {
+        //Foreground Notification
+        service.setForegroundNotificationInfo(
+            title: "Power watcher", content: "watching the power");
+      }
+    }
+
+    if (DateTime.now().hour == 17) {
+      SpitzenStundenObject spitzenStunden = await fetchApgSpitzenApi();
+      print("Now");
+    }
+
+    AwesomeNotifications().createNotification(
+        content: NotificationContent(
+            id: 10,
+            channelKey: 'basic_channel',
+            title: 'Spitzenstunde voraus!',
+            body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
+            actionType: ActionType.Default),
+        schedule: NotificationCalendar.fromDate(
+            date: DateTime.now().add(Duration(seconds: 12))));
+
+    print("Background service running");
+  });
 }
