@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -364,11 +365,11 @@ void onStart(ServiceInstance service) async {
       service.setAsBackgroundService();
     });
   }
-  service.on('sopService').listen((event) {
+  service.on('stopService').listen((event) {
     service.stopSelf();
   });
 
-  Timer.periodic(const Duration(seconds: 10), (timer) async {
+  Timer.periodic(const Duration(seconds: 2), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         //Foreground Notification
@@ -377,20 +378,20 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (DateTime.now().hour == 17) {
+    if (DateTime.now().hour == 15) {
       SpitzenStundenObject spitzenStunden = await fetchApgSpitzenApi();
+
+      await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+              id: Random().nextInt(100),
+              channelKey: 'basic_channel',
+              title: 'Spitzenstunde voraus!',
+              body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
+              actionType: ActionType.Default),
+          schedule: NotificationCalendar.fromDate(
+              date: DateTime.now().add(Duration(seconds: 10))));
       print("Now");
     }
-
-    AwesomeNotifications().createNotification(
-        content: NotificationContent(
-            id: 10,
-            channelKey: 'basic_channel',
-            title: 'Spitzenstunde voraus!',
-            body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
-            actionType: ActionType.Default),
-        schedule: NotificationCalendar.fromDate(
-            date: DateTime.now().add(Duration(seconds: 12))));
 
     print("Background service running");
   });

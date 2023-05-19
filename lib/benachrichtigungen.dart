@@ -10,6 +10,7 @@ import 'information.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late SharedPreferences prefs;
+bool isNotificationOn = false;
 
 class Benachrichtigungen extends StatefulWidget {
   const Benachrichtigungen({super.key});
@@ -20,12 +21,13 @@ class Benachrichtigungen extends StatefulWidget {
 
 class _BenachrichtigungenState extends State<Benachrichtigungen> {
   @override
-  Future<void> initState() async {
-    prefs = await SharedPreferences.getInstance();
+  void initState() {
+    setInitialNotificationSwitchtileValue();
+
+    // TODO: implement initState
     super.initState();
   }
 
-  bool isNotificationOn = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,22 +45,19 @@ class _BenachrichtigungenState extends State<Benachrichtigungen> {
                     isNotificationOn = value;
                   });
 
+                  print("Switchtile value: " + value.toString());
+
                   if (value) {
-                    FlutterBackgroundService().invoke("setAsBackground");
-
-                    /*
-                    AwesomeNotifications().createNotification(
-                        content: NotificationContent(
-                            id: 10,
-                            channelKey: 'basic_channel',
-                            title: 'Spitzenstunde voraus!',
-                            body:
-                                'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
-                            actionType: ActionType.Default),
-                        schedule: NotificationCalendar.fromDate(
-                            date: DateTime.now().add(Duration(seconds: 10))));
-
-                            */
+                    print("in true");
+                    if (!await FlutterBackgroundService().isRunning()) {
+                      FlutterBackgroundService().startService();
+                      print("in setAsBackground");
+                      FlutterBackgroundService().invoke("setAsBackground");
+                    }
+                  } else {
+                    if (await FlutterBackgroundService().isRunning()) {
+                      FlutterBackgroundService().invoke("stopService");
+                    }
                   }
                 },
                 title: Text("Benachrichtigungen")),
@@ -76,5 +75,11 @@ class _BenachrichtigungenState extends State<Benachrichtigungen> {
         )
       ]),
     );
+  }
+
+  void setInitialNotificationSwitchtileValue() async {
+    isNotificationOn = await FlutterBackgroundService().isRunning();
+
+    setState(() {});
   }
 }
