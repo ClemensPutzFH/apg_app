@@ -11,7 +11,7 @@ import awesome_notifications
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-
+      UIApplication.shared.setMinimumBackgroundFetchInterval(TimeInterval(1)) 
       // This function registers the desired plugins to be used within a notification background action
       SwiftAwesomeNotificationsPlugin.setPluginRegistrantCallback { registry in          
           SwiftAwesomeNotificationsPlugin.register(

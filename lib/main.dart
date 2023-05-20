@@ -4,22 +4,38 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'ampel.dart';
 import 'benachrichtigungen.dart';
 import 'information.dart';
 import 'prognose.dart';
-import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 late SpitzenStundenObject spitzenStundenData;
 
+const fetchBackground = "fetchBackground";
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case fetchBackground:
+        // Code to run in background
+        print("Testing background service");
+        break;
+    }
+    return Future.value(true);
+  });
+}
+
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Workmanager().registerOneOffTask("1", fetchBackground);
+
   AwesomeNotifications().initialize(
       // set the icon to null if you want to use the default app icon
       null,
@@ -39,8 +55,6 @@ void main() async {
             channelGroupName: 'Basic group')
       ],
       debug: true);
-
-  await inizializeService();
 
   runApp(const MyApp());
 }
@@ -84,6 +98,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    Workmanager().initialize(
+      callbackDispatcher,
+      isInDebugMode: true,
+    );
+
+    Workmanager().registerPeriodicTask(
+      fetchBackground,
+      fetchBackground,
+      frequency: Duration(minutes: 15),
+    );
+
     AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
       if (!isAllowed) {
         // This is just a basic example. For real apps, you must show some
@@ -334,65 +359,4 @@ class StatusInfos {
     data['s'] = this.status;
     return data;
   }
-}
-
-Future<void> inizializeService() async {
-  final service = FlutterBackgroundService();
-  await service.configure(
-      iosConfiguration: IosConfiguration(
-          autoStart: true,
-          onForeground: onStart,
-          onBackground: onIosBackground),
-      androidConfiguration: AndroidConfiguration(
-          onStart: onStart, isForegroundMode: true, autoStart: true));
-}
-
-@pragma('vm:entry-point')
-Future<bool> onIosBackground(ServiceInstance service) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  DartPluginRegistrant.ensureInitialized();
-  return true;
-}
-
-@pragma('vm:entry-point')
-void onStart(ServiceInstance service) async {
-  DartPluginRegistrant.ensureInitialized();
-  if (service is AndroidServiceInstance) {
-    service.on('setAsForeground').listen((event) {
-      service.setAsForegroundService();
-    });
-    service.on('setAsBackground').listen((event) {
-      service.setAsBackgroundService();
-    });
-  }
-  service.on('stopService').listen((event) {
-    service.stopSelf();
-  });
-
-  Timer.periodic(const Duration(seconds: 2), (timer) async {
-    if (service is AndroidServiceInstance) {
-      if (await service.isForegroundService()) {
-        //Foreground Notification
-        service.setForegroundNotificationInfo(
-            title: "Power watcher", content: "watching the power");
-      }
-    }
-
-    if (DateTime.now().hour == 15) {
-      SpitzenStundenObject spitzenStunden = await fetchApgSpitzenApi();
-
-      await AwesomeNotifications().createNotification(
-          content: NotificationContent(
-              id: Random().nextInt(100),
-              channelKey: 'basic_channel',
-              title: 'Spitzenstunde voraus!',
-              body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
-              actionType: ActionType.Default),
-          schedule: NotificationCalendar.fromDate(
-              date: DateTime.now().add(Duration(seconds: 10))));
-      print("Now");
-    }
-
-    print("Background service running");
-  });
 }
