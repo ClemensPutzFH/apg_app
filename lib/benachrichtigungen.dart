@@ -9,7 +9,6 @@ import 'information.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-late SharedPreferences prefs;
 bool isNotificationOn = false;
 
 class Benachrichtigungen extends StatefulWidget {

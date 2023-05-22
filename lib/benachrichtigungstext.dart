@@ -1,7 +1,20 @@
 import 'package:flutter/material.dart';
 
-class Benachrichtigungstext extends StatelessWidget {
+class Benachrichtigungstext extends StatefulWidget {
   const Benachrichtigungstext({super.key});
+
+  @override
+  State<Benachrichtigungstext> createState() => _BenachrichtigungstextState();
+}
+
+class _BenachrichtigungstextState extends State<Benachrichtigungstext> {
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = new TextEditingController(text: 'Initial value');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +32,10 @@ class Benachrichtigungstext extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  TextField(keyboardType: TextInputType.multiline, maxLines: 4)
+                  TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 4,
+                      controller: _controller)
                 ],
               ),
               width: MediaQuery.of(context).size.width * 0.85,
