@@ -10,6 +10,7 @@ import 'information.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //test
+//https://www.geeksforgeeks.org/flutter-sharedpreferences/
 
 late SharedPreferences prefs;
 
