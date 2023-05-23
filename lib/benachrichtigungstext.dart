@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const String key = "benachrichtigungsTextKey";
 
 class Benachrichtigungstext extends StatefulWidget {
   const Benachrichtigungstext({super.key});
@@ -9,11 +12,13 @@ class Benachrichtigungstext extends StatefulWidget {
 
 class _BenachrichtigungstextState extends State<Benachrichtigungstext> {
   late TextEditingController _controller;
+  String initString;
   @override
   void initState() {
     // TODO: implement initState
+    getSharedPreferences();
     super.initState();
-    _controller = new TextEditingController(text: 'Initial value');
+    _controller = new TextEditingController(text: );
   }
 
   @override
@@ -33,6 +38,9 @@ class _BenachrichtigungstextState extends State<Benachrichtigungstext> {
                     height: 20,
                   ),
                   TextField(
+                      onChanged: (text) {
+                        prefs.setString(key, text);
+                      },
                       keyboardType: TextInputType.multiline,
                       maxLines: 4,
                       controller: _controller)
@@ -44,4 +52,9 @@ class _BenachrichtigungstextState extends State<Benachrichtigungstext> {
           ],
         ));
   }
+}
+
+void getInitialTextfieldValue() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  initString = prefs.getString(key);
 }
