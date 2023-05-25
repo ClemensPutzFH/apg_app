@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:apg_app/benachrichtigungstext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:http/http.dart' as http;
@@ -378,21 +379,29 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (DateTime.now().hour == 15) {
+    if (DateTime.now().hour == 18) {
       SpitzenStundenObject spitzenStunden = await fetchApgSpitzenApi();
 
-      await AwesomeNotifications().createNotification(
-          content: NotificationContent(
-              id: Random().nextInt(100),
-              channelKey: 'basic_channel',
-              title: 'Spitzenstunde voraus!',
-              body: 'Heute um 8 - 14 Uhr ist eine Stromspitzenstunde.',
-              actionType: ActionType.Default),
-          schedule: NotificationCalendar.fromDate(
-              date: DateTime.now().add(Duration(seconds: 10))));
+      pref_getString(benachrichtigungsTextKey).then((value) {
+        AwesomeNotifications().createNotification(
+            content: NotificationContent(
+                id: Random().nextInt(100),
+                channelKey: 'basic_channel',
+                title: 'Spitzenstunde voraus!',
+                body: value,
+                actionType: ActionType.Default),
+            schedule: NotificationCalendar.fromDate(
+                date: DateTime.now().add(Duration(seconds: 10))));
+      });
+
       print("Now");
     }
 
     print("Background service running");
   });
+}
+
+Future<String?> pref_getString(String key) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString(key);
 }
