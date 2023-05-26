@@ -7,12 +7,12 @@ import 'package:apg_app/benachrichtigungstext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 import 'ampel.dart';
 import 'benachrichtigungen.dart';
 import 'information.dart';
 import 'prognose.dart';
+
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -379,8 +379,11 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (DateTime.now().hour == 18) {
-      SpitzenStundenObject spitzenStunden = await fetchApgSpitzenApi();
+    if (DateTime.now().hour == 16) {
+      print("Now");
+      fetchApgSpitzenApi().then((spitzenStunden) {
+        spitzenStunden.statusInfos.forEach((element) {});
+      });
 
       pref_getString(benachrichtigungsTextKey).then((value) {
         AwesomeNotifications().createNotification(
@@ -391,12 +394,11 @@ void onStart(ServiceInstance service) async {
                 body: value,
                 actionType: ActionType.Default),
             schedule: NotificationCalendar.fromDate(
-                date: DateTime.now().add(Duration(seconds: 10))));
+                date: DateTime.now().add(Duration(seconds: 1))));
       });
-
-      print("Now");
     }
 
+    print("Hour:" + DateTime.now().hour.toString());
     print("Background service running");
   });
 }
