@@ -370,6 +370,12 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
+  List<StatusInfos> spitzenStundenNotificationArray = List<StatusInfos>.empty();
+
+  fetchApgSpitzenApi().then((spitzenStunden) {
+    spitzenStundenNotificationArray = spitzenStunden.statusInfos;
+  });
+
   Timer.periodic(const Duration(seconds: 2), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
@@ -379,24 +385,27 @@ void onStart(ServiceInstance service) async {
       }
     }
 
-    if (DateTime.now().hour == 16) {
+    if (DateTime.now().hour == 0) {
       print("Now");
       fetchApgSpitzenApi().then((spitzenStunden) {
-        spitzenStunden.statusInfos.forEach((element) {});
+        spitzenStundenNotificationArray = spitzenStunden.statusInfos;
       });
+    }
 
-      pref_getString(benachrichtigungsTextKey).then((value) {
-        AwesomeNotifications().createNotification(
+    spitzenStundenNotificationArray.forEach((element) {
+      if (DateTime.now().difference(DateTime.parse(element.utc)).inHours == 1) {
+        pref_getString(benachrichtigungsTextKey).then((value) {
+          AwesomeNotifications().createNotification(
             content: NotificationContent(
                 id: Random().nextInt(100),
                 channelKey: 'basic_channel',
                 title: 'Spitzenstunde voraus!',
                 body: value,
                 actionType: ActionType.Default),
-            schedule: NotificationCalendar.fromDate(
-                date: DateTime.now().add(Duration(seconds: 1))));
-      });
-    }
+          );
+        });
+      }
+    });
 
     print("Hour:" + DateTime.now().hour.toString());
     print("Background service running");
