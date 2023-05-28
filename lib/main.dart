@@ -378,7 +378,7 @@ void onStart(ServiceInstance service) async {
     spitzenStundenNotificationArray = spitzenStunden.statusInfos;
   });
 
-  Timer.periodic(const Duration(seconds: 10), (timer) async {
+  Timer.periodic(const Duration(seconds: 3), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         //Foreground Notification
@@ -399,19 +399,25 @@ void onStart(ServiceInstance service) async {
       spitzenStundenNotificationArray = [
         StatusInfos(
             utc: DateTime.now().add(Duration(minutes: 61)).toUtc().toString(),
+            status: "2"),
+        StatusInfos(
+            utc: DateTime.now().add(Duration(minutes: 121)).toUtc().toString(),
+            status: "2"),
+        StatusInfos(
+            utc: DateTime.now().add(Duration(minutes: 241)).toUtc().toString(),
             status: "2")
       ];
+
+      print("first Spitzenstunden: " +
+          getNextFirstLocalSpitzenStundenHour(spitzenStundenNotificationArray)
+              .toString());
+
+      print("last Spitzenstunden: " +
+          getNextLastLocalSpitzenStundenHour(spitzenStundenNotificationArray)
+              .toString());
     }
 
     spitzenStundenNotificationArray.forEach((element) {
-      print("Differnz: " +
-          DateTime.parse(element.utc)
-              .difference(DateTime.now())
-              .inHours
-              .toString() +
-          "Status: " +
-          element.status);
-
       if (DateTime.parse(element.utc).difference(DateTime.now()).inHours == 1 &&
           element.status == "2") {
         pref_getString(benachrichtigungsTextKey).then((value) {
@@ -419,7 +425,15 @@ void onStart(ServiceInstance service) async {
             content: NotificationContent(
                 id: Random().nextInt(100),
                 channelKey: 'basic_channel',
-                title: 'Spitzenstunde voraus!',
+                title: 'Spitzenstunde von ' +
+                    getNextFirstLocalSpitzenStundenHour(
+                            spitzenStundenNotificationArray)
+                        .toString() +
+                    " - " +
+                    getNextLastLocalSpitzenStundenHour(
+                            spitzenStundenNotificationArray)
+                        .toString() +
+                    " Uhr!",
                 body: value,
                 actionType: ActionType.Default),
           );
@@ -436,4 +450,23 @@ Future<String?> pref_getString(String key) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.reload();
   return prefs.getString(key);
+}
+
+int? getNextFirstLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
+  for (var element in spitzenstunden) {
+    return DateTime.parse(element.utc).toLocal().hour;
+  }
+  return null;
+}
+
+int? getNextLastLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
+  DateTime lastSpitzenStunde = DateTime.parse(spitzenstunden.first.utc);
+  for (var element in spitzenstunden.getRange(1, spitzenstunden.length)) {
+    if (DateTime.parse(element.utc).difference(lastSpitzenStunde).inHours !=
+        1) {
+      return lastSpitzenStunde.toLocal().hour;
+    }
+    lastSpitzenStunde = DateTime.parse(element.utc);
+  }
+  return lastSpitzenStunde.toLocal().hour;
 }
