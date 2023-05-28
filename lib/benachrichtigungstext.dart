@@ -56,7 +56,7 @@ class _BenachrichtigungstextState extends State<Benachrichtigungstext> {
 void getInitialTextfieldValue(
     String key, TextEditingController controller) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  controller.text = prefs.getString(key)!;
+  controller.text = prefs.getString(key) ?? "";
 }
 
 void pref_setString(String key, String value) async {

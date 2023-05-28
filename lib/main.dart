@@ -18,6 +18,9 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+bool redTest = false;
+bool notificationTest = true;
+
 late SpitzenStundenObject spitzenStundenData;
 
 void main() async {
@@ -81,7 +84,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _counter = 0;
   late Future<SpitzenStundenObject> SpitzenStundenData;
-  bool redTest = false;
 
   @override
   void initState() {
@@ -376,7 +378,7 @@ void onStart(ServiceInstance service) async {
     spitzenStundenNotificationArray = spitzenStunden.statusInfos;
   });
 
-  Timer.periodic(const Duration(seconds: 2), (timer) async {
+  Timer.periodic(const Duration(seconds: 10), (timer) async {
     if (service is AndroidServiceInstance) {
       if (await service.isForegroundService()) {
         //Foreground Notification
@@ -392,8 +394,26 @@ void onStart(ServiceInstance service) async {
       });
     }
 
+    //Test for notification
+    if (notificationTest) {
+      spitzenStundenNotificationArray = [
+        StatusInfos(
+            utc: DateTime.now().add(Duration(minutes: 61)).toUtc().toString(),
+            status: "2")
+      ];
+    }
+
     spitzenStundenNotificationArray.forEach((element) {
-      if (DateTime.now().difference(DateTime.parse(element.utc)).inHours == 1) {
+      print("Differnz: " +
+          DateTime.parse(element.utc)
+              .difference(DateTime.now())
+              .inHours
+              .toString() +
+          "Status: " +
+          element.status);
+
+      if (DateTime.parse(element.utc).difference(DateTime.now()).inHours == 1 &&
+          element.status == "2") {
         pref_getString(benachrichtigungsTextKey).then((value) {
           AwesomeNotifications().createNotification(
             content: NotificationContent(
@@ -407,12 +427,13 @@ void onStart(ServiceInstance service) async {
       }
     });
 
-    print("Hour:" + DateTime.now().hour.toString());
     print("Background service running");
   });
 }
 
 Future<String?> pref_getString(String key) async {
+  print("get database");
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.reload();
   return prefs.getString(key);
 }
