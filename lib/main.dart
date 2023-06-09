@@ -405,16 +405,11 @@ void onStart(ServiceInstance service) async {
             status: "2"),
         StatusInfos(
             utc: DateTime.now().add(Duration(minutes: 241)).toUtc().toString(),
+            status: "2"),
+        StatusInfos(
+            utc: DateTime.now().add(Duration(minutes: 301)).toUtc().toString(),
             status: "2")
       ];
-
-      print("first Spitzenstunden: " +
-          getNextFirstLocalSpitzenStundenHour(spitzenStundenNotificationArray)
-              .toString());
-
-      print("last Spitzenstunden: " +
-          getNextLastLocalSpitzenStundenHour(spitzenStundenNotificationArray)
-              .toString());
     }
 
     spitzenStundenNotificationArray.forEach((element) {
@@ -460,13 +455,16 @@ int? getNextFirstLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
 }
 
 int? getNextLastLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
-  DateTime lastSpitzenStunde = DateTime.parse(spitzenstunden.first.utc);
+  StatusInfos lastSpitzenStunde = spitzenstunden.first;
   for (var element in spitzenstunden.getRange(1, spitzenstunden.length)) {
-    if (DateTime.parse(element.utc).difference(lastSpitzenStunde).inHours !=
+    if (DateTime.parse(element.utc)
+            .difference(DateTime.parse(lastSpitzenStunde.utc))
+            .inHours !=
         1) {
-      return lastSpitzenStunde.toLocal().hour;
+      spitzenstunden.removeRange(0, spitzenstunden.indexOf(element));
+      return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour;
     }
-    lastSpitzenStunde = DateTime.parse(element.utc);
+    lastSpitzenStunde = element;
   }
-  return lastSpitzenStunde.toLocal().hour;
+  return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour;
 }
