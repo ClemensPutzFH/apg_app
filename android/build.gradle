@@ -4,6 +4,11 @@ buildscript {
         google()
         mavenCentral()
     }
+    ext {
+       compileSdkVersion   = 31                // or latest
+       targetSdkVersion    = 31                // or latest
+       appCompatVersion    = "1.4.2"           // or latest
+   }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:7.2.0'
@@ -17,7 +22,12 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven {
+           // [required] background_fetch
+           url "${project(':background_fetch').projectDir}/libs"
+       }
     }
+
 }
 
 rootProject.buildDir = '../build'
