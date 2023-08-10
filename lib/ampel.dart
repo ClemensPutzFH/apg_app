@@ -51,6 +51,12 @@ class AmpelBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
+    if (width > 400) {
+      width = 400;
+    }
+
     // TODO: implement build
     return SingleChildScrollView(
       child: Row(
@@ -59,11 +65,11 @@ class AmpelBuilder extends StatelessWidget {
           Column(
             children: <Widget>[
               SizedBox(
-                height: MediaQuery.of(context).size.width * 0.15,
+                height: width * 0.15,
               ),
               Container(
-                  width: MediaQuery.of(context).size.width * 0.80,
-                  height: MediaQuery.of(context).size.width * 0.80,
+                  width: width * 0.8,
+                  height: width * 0.8,
                   decoration: BoxDecoration(
                       color: Color(0xFFdcdfe6),
                       borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -72,14 +78,11 @@ class AmpelBuilder extends StatelessWidget {
                     children: [
                       Image(image: AssetImage(resImage)),
                       SizedBox(
-                        height: MediaQuery.of(context).size.width * 0.07,
+                        height: width * 0.07,
                       ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(
-                            MediaQuery.of(context).size.width * 0.15,
-                            0,
-                            MediaQuery.of(context).size.width * 0.15,
-                            0),
+                            width * 0.15, 0, width * 0.15, 0),
                         child: FittedBox(
                           child: Text(
                             status,
@@ -91,7 +94,7 @@ class AmpelBuilder extends StatelessWidget {
                       //Text(snapshot.data!.lastUtc)
                     ],
                   )),
-              SizedBox(height: MediaQuery.of(context).size.width * 0.15),
+              SizedBox(height: width * 0.15),
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.85,
                 child: Column(

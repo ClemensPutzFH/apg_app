@@ -12,6 +12,7 @@ import 'ampel.dart';
 import 'benachrichtigungen.dart';
 import 'information.dart';
 import 'prognose.dart';
+import 'prognoseWidget.dart';
 
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 
@@ -19,7 +20,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool redTest = false;
-bool notificationTest = true;
+bool notificationTest = false;
 
 late SpitzenStundenObject spitzenStundenData;
 
@@ -245,7 +246,12 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 return FadeTransition(
                     opacity: _animation,
                     child: SingleChildScrollView(
-                      child: AmpelGreen(),
+                      child: Column(children: [
+                        AmpelGreen(),
+                        PrognoseView(
+                          data: snapshot.data!,
+                        )
+                      ]),
                       physics: AlwaysScrollableScrollPhysics(),
                     ));
               } else if (snapshot.hasError) {
