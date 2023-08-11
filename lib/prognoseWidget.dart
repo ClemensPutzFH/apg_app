@@ -37,9 +37,16 @@ class PrognoseView extends StatelessWidget {
     List<Widget> hourTiles = List<Widget>.empty(growable: true);
 
     for (var i = 1; i <= lastUtc.difference(firstUtc).inHours; i++) {
-      var iTime = lastUtc.toLocal().add(Duration(hours: i));
+      var iTime = firstUtc.add(Duration(hours: i - 1));
+      bool tileStatusOrange = false;
+      data.statusInfos.forEach((element) {
+        if (DateTime.parse(element.utc).toLocal().difference(iTime).inHours ==
+            0) {
+          tileStatusOrange = true;
+        }
+      });
 
-      hourTiles.add(getHourTile(1));
+      hourTiles.add(getHourTile(tileStatusOrange));
 
       if (i % 24 == 0) {
         prognoseDays
@@ -92,7 +99,7 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              ' 0 Uhr',
+                              '0 Uhr',
                             ),
                             Text(
                               ' 4 Uhr',
@@ -101,7 +108,7 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
                               ' 8 Uhr',
                             ),
                             Text(
-                              '12 Uhr',
+                              '  12 Uhr',
                             ),
                             Text(
                               '16 Uhr',
@@ -135,15 +142,20 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
   );
 }
 
-Widget getHourTile(status) {
+Widget getHourTile(orangeStatus) {
+  Color tileColor = Color(0xFF51a672);
+  if (orangeStatus) {
+    tileColor = Color(0xFFc6463c);
+  }
+
   return Container(
     width: 20.0,
     height: 50.0,
     decoration: BoxDecoration(
-      color: Color(0xFFFF00FF),
+      color: tileColor,
       shape: BoxShape.rectangle,
       border: Border.all(
-        color: Color(0xFF00FFFF),
+        color: Color(0xFF0c1c2a),
       ),
     ),
   );

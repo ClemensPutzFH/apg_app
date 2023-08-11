@@ -19,7 +19,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool redTest = false;
+bool redTest = true;
 bool notificationTest = false;
 
 late SpitzenStundenObject spitzenStundenData;
@@ -236,7 +236,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     return FadeTransition(
                       opacity: _animation,
                       child: SingleChildScrollView(
-                        child: AmpelRed(),
+                        child: Column(
+                          children: [
+                            AmpelRed(),
+                            PrognoseView(
+                              data: snapshot.data!,
+                            )
+                          ],
+                        ),
                         physics: AlwaysScrollableScrollPhysics(),
                       ),
                     );
