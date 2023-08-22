@@ -40,8 +40,7 @@ class PrognoseView extends StatelessWidget {
       var iTime = firstUtc.add(Duration(hours: i - 1));
       bool tileStatusOrange = false;
       data.statusInfos.forEach((element) {
-        if (DateTime.parse(element.utc).toLocal().difference(iTime).inHours ==
-            0) {
+        if (DateTime.parse(element.utc).difference(iTime).inHours == 0) {
           tileStatusOrange = true;
         }
       });
@@ -56,7 +55,20 @@ class PrognoseView extends StatelessWidget {
     }
 
     return Column(
-      children: prognoseDays,
+      children: [
+        Padding(
+          child: Text("Prognose"),
+          padding: EdgeInsets.fromLTRB(0, 30, 0, 10),
+        ),
+        Container(
+          child: Column(
+            children: prognoseDays,
+          ),
+        ),
+        Container(
+          height: 30,
+        )
+      ],
     );
   }
 }
@@ -74,8 +86,11 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.075,
               ),
-              Text(
-                'Heute',
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                child: Text(
+                  getWeekday(day),
+                ),
               ),
               Spacer()
             ],
@@ -159,4 +174,46 @@ Widget getHourTile(orangeStatus) {
       ),
     ),
   );
+}
+
+String getWeekday(int day) {
+  switch (day) {
+    case 1:
+      {
+        return "Montag";
+      }
+
+    case 2:
+      {
+        return "Dienstag";
+      }
+
+    case 3:
+      {
+        return "Mittwoch";
+      }
+
+    case 4:
+      {
+        return "Donnerstag";
+      }
+
+    case 5:
+      {
+        return "Freitag";
+      }
+    case 6:
+      {
+        return "Samstag";
+      }
+    case 7:
+      {
+        return "Sonntag";
+      }
+
+    default:
+      {
+        return "Error";
+      }
+  }
 }

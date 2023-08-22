@@ -19,7 +19,7 @@ import 'package:flutter_background_service_android/flutter_background_service_an
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-bool redTest = true;
+bool redTest = false;
 bool notificationTest = false;
 
 late SpitzenStundenObject spitzenStundenData;
@@ -200,7 +200,11 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
                 if (redTest) {
                   snapshot.data!.statusInfos.add(StatusInfos(
-                      utc: now.add(Duration(seconds: 1)).toUtc().toString(),
+                      utc: now
+                          .add(Duration(seconds: 1))
+                          .subtract(Duration(minutes: now.minute))
+                          .toUtc()
+                          .toString(),
                       status: "2"));
                 }
 
