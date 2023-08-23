@@ -45,7 +45,7 @@ class PrognoseView extends StatelessWidget {
         }
       });
 
-      hourTiles.add(getHourTile(tileStatusOrange));
+      hourTiles.add(getHourTile(tileStatusOrange, i));
 
       if (i % 24 == 0) {
         prognoseDays
@@ -157,21 +157,48 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
   );
 }
 
-Widget getHourTile(orangeStatus) {
+Widget getHourTile(orangeStatus, tileNumber) {
   Color tileColor = Color(0xFF51a672);
   if (orangeStatus) {
     tileColor = Color(0xFFc6463c);
   }
 
+  var showTriangle = false;
+
+  showTriangle = (tileNumber - 1) % 4 == 0;
+
   return Container(
-    width: 20.0,
-    height: 50.0,
-    decoration: BoxDecoration(
-      color: tileColor,
-      shape: BoxShape.rectangle,
-      border: Border.all(
-        color: Color(0xFF0c1c2a),
-      ),
+    child: Column(
+      children: [
+        Opacity(
+          opacity: showTriangle ? 1.0 : 0.0,
+          child: Transform.translate(
+            offset: Offset(-10, 0),
+            child: Transform.rotate(
+              angle: 3.1415,
+              child: CustomPaint(
+                size: Size(13, 13),
+                painter: TrianglePainter(
+                  strokeColor: Color(0xFF0c1c2a),
+                  strokeWidth: 10,
+                  paintingStyle: PaintingStyle.fill,
+                ),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: 20.0,
+          height: 50.0,
+          decoration: BoxDecoration(
+            color: tileColor,
+            shape: BoxShape.rectangle,
+            border: Border.all(
+              color: Color(0xFF0c1c2a),
+            ),
+          ),
+        ),
+      ],
     ),
   );
 }
@@ -215,5 +242,41 @@ String getWeekday(int day) {
       {
         return "Error";
       }
+  }
+}
+
+class TrianglePainter extends CustomPainter {
+  final Color strokeColor;
+  final PaintingStyle paintingStyle;
+  final double strokeWidth;
+
+  TrianglePainter(
+      {this.strokeColor = Colors.black,
+      this.strokeWidth = 3,
+      this.paintingStyle = PaintingStyle.stroke});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = strokeColor
+      ..strokeWidth = strokeWidth
+      ..style = paintingStyle;
+
+    canvas.drawPath(getTrianglePath(size.width, size.height), paint);
+  }
+
+  Path getTrianglePath(double x, double y) {
+    return Path()
+      ..moveTo(0, y)
+      ..lineTo(x / 2, 0)
+      ..lineTo(x, y)
+      ..lineTo(0, y);
+  }
+
+  @override
+  bool shouldRepaint(TrianglePainter oldDelegate) {
+    return oldDelegate.strokeColor != strokeColor ||
+        oldDelegate.paintingStyle != paintingStyle ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
