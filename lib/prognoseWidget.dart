@@ -61,7 +61,10 @@ class PrognoseView extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          child: Text("Prognose"),
+          child: Text(
+            "Prognose",
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ),
           padding: EdgeInsets.fromLTRB(0, 30, 0, 10),
         ),
         Container(
@@ -96,9 +99,8 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day, isToday) {
               ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
-                child: Text(
-                  getWeekday(day),
-                ),
+                child: Text(getWeekday(day),
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               Spacer()
             ],
