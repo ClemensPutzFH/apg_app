@@ -20,7 +20,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool redTest = false;
-bool notificationTest = false;
+bool notificationTest = true;
 
 late SpitzenStundenObject spitzenStundenData;
 
@@ -224,17 +224,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       DateTime.parse(peakHoursObject.utc);
                   DateTime nowTimeStamp = DateTime.now();
 
-                  print("Now: " + nowTimeStamp.toString());
-                  print("Peak Hour:" + peakHourTimeStamp.toString());
-                  print("Difference: " +
-                      peakHourTimeStamp
-                          .difference(nowTimeStamp)
-                          .inHours
+                  print("Satus Differenz: " +
+                      nowTimeStamp
+                          .difference(peakHourTimeStamp)
+                          .inMinutes
                           .toString());
 
-                  print(" ");
-
-                  if (peakHourTimeStamp.difference(nowTimeStamp).inHours == 0 &&
+                  if (nowTimeStamp.difference(peakHourTimeStamp).inMinutes <
+                          60 &&
+                      nowTimeStamp.difference(peakHourTimeStamp).inMinutes >
+                          0 &&
                       peakHoursObject.status == "2") {
                     _controller.forward();
                     return FadeTransition(
@@ -405,7 +404,7 @@ void onStart(ServiceInstance service) async {
     }
 
     if (DateTime.now().hour == 0) {
-      print("Now");
+      print("Fetch new Data at 0 oclock");
       fetchApgSpitzenApi().then((spitzenStunden) {
         spitzenStundenNotificationArray = spitzenStunden.statusInfos;
       });
@@ -430,8 +429,13 @@ void onStart(ServiceInstance service) async {
     }
 
     spitzenStundenNotificationArray.forEach((element) {
-      if (DateTime.parse(element.utc).difference(DateTime.now()).inHours == 1 &&
+      if (DateTime.now().difference(DateTime.parse(element.utc)).inMinutes >
+              -60 &&
+          DateTime.now().difference(DateTime.parse(element.utc)).inMinutes <
+              0 &&
           element.status == "2") {
+        print("Spitzenstunde");
+
         pref_getString(benachrichtigungsTextKey).then((value) {
           AwesomeNotifications().createNotification(
             content: NotificationContent(
@@ -479,9 +483,9 @@ int? getNextLastLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
             .inHours !=
         1) {
       spitzenstunden.removeRange(0, spitzenstunden.indexOf(element));
-      return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour;
+      return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour + 1;
     }
     lastSpitzenStunde = element;
   }
-  return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour;
+  return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour + 1;
 }

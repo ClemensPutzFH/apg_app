@@ -45,7 +45,11 @@ class PrognoseView extends StatelessWidget {
         }
       });
 
-      hourTiles.add(getHourTile(tileStatusOrange, i));
+      hourTiles.add(getHourTile(
+          tileStatusOrange,
+          i,
+          DateTime.now().difference(iTime).inMinutes < 60 &&
+              DateTime.now().difference(iTime).inMinutes > 0));
 
       if (i % 24 == 0) {
         prognoseDays
@@ -157,7 +161,7 @@ Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
   );
 }
 
-Widget getHourTile(orangeStatus, tileNumber) {
+Widget getHourTile(orangeStatus, tileNumber, isNow) {
   Color tileColor = Color(0xFF51a672);
   if (orangeStatus) {
     tileColor = Color(0xFFc6463c);
@@ -190,6 +194,15 @@ Widget getHourTile(orangeStatus, tileNumber) {
         Container(
           width: 20.0,
           height: 50.0,
+          child: Opacity(
+            opacity: isNow ? 1.0 : 0.0,
+            child: Container(
+              width: 1,
+              height: 1,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle, color: Color(0xFFFFFFFF)),
+            ),
+          ),
           decoration: BoxDecoration(
             color: tileColor,
             shape: BoxShape.rectangle,
