@@ -52,8 +52,8 @@ class PrognoseView extends StatelessWidget {
               DateTime.now().difference(iTime).inMinutes > 0));
 
       if (i % 24 == 0) {
-        prognoseDays
-            .add(getPrognoseRow(context, List.from(hourTiles), iTime.weekday));
+        prognoseDays.add(getPrognoseRow(context, List.from(hourTiles),
+            iTime.weekday, prognoseDays.length == 0));
         hourTiles = List<Widget>.empty(growable: true);
       }
     }
@@ -77,7 +77,11 @@ class PrognoseView extends StatelessWidget {
   }
 }
 
-Widget getPrognoseRow(context, List<Widget> rowTileList, day) {
+Widget getPrognoseRow(context, List<Widget> rowTileList, day, isToday) {
+  if (isToday) {
+    day = 10;
+  }
+
   return LayoutBuilder(
     builder: (BuildContext buildContext, BoxConstraints constraints) {
       return Column(
@@ -197,10 +201,14 @@ Widget getHourTile(orangeStatus, tileNumber, isNow) {
           child: Opacity(
             opacity: isNow ? 1.0 : 0.0,
             child: Container(
-              width: 1,
-              height: 1,
+              width: 0.5,
+              height: 0.5,
               decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Color(0xFFFFFFFF)),
+                  shape: BoxShape.circle,
+                  color: Color(0xFFFFFFFF),
+                  border: Border.all(
+                    color: Color(0xFF0c1c2a),
+                  )),
             ),
           ),
           decoration: BoxDecoration(
@@ -249,6 +257,10 @@ String getWeekday(int day) {
     case 7:
       {
         return "Sonntag";
+      }
+    case 10:
+      {
+        return "Heute";
       }
 
     default:
