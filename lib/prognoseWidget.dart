@@ -48,8 +48,8 @@ class PrognoseView extends StatelessWidget {
       hourTiles.add(getHourTile(
           tileStatusOrange,
           i,
-          DateTime.now().difference(iTime).inMinutes < 60 &&
-              DateTime.now().difference(iTime).inMinutes >= 0));
+          DateTime.now().difference(iTime).inSeconds < 3600 &&
+              DateTime.now().difference(iTime).inSeconds >= 0));
 
       if (i % 24 == 0) {
         prognoseDays.add(getPrognoseRow(context, List.from(hourTiles),

@@ -171,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Prognose(SpitzenStundenData)),
+                      builder: (context) => Prognose(spitzenStundenData)),
                 );
               } else if (menuItem == 2) {
                 Navigator.push(
@@ -230,9 +230,9 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           .inMinutes
                           .toString());
 
-                  if (nowTimeStamp.difference(peakHourTimeStamp).inMinutes <
-                          60 &&
-                      nowTimeStamp.difference(peakHourTimeStamp).inMinutes >
+                  if (nowTimeStamp.difference(peakHourTimeStamp).inSeconds <
+                          3600 &&
+                      nowTimeStamp.difference(peakHourTimeStamp).inSeconds >=
                           0 &&
                       peakHoursObject.status == "2") {
                     _controller.forward();
