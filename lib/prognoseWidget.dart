@@ -9,6 +9,7 @@ import 'package:apg_app/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import 'ampel.dart';
 import 'benachrichtigungen.dart';
@@ -73,7 +74,12 @@ class PrognoseView extends StatelessWidget {
           ),
         ),
         Container(
-          height: 30,
+          height: 20,
+        ),
+        Text("Zuletzt aktualisiert: " +
+            DateFormat('dd.MM.yyyy – kk:mm').format(DateTime.now()).toString()),
+        Container(
+          height: 20,
         )
       ],
     );
