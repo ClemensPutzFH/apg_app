@@ -224,12 +224,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       DateTime.parse(peakHoursObject.utc);
                   DateTime nowTimeStamp = DateTime.now();
 
-                  print("Satus Differenz: " +
-                      nowTimeStamp
-                          .difference(peakHourTimeStamp)
-                          .inMinutes
-                          .toString());
-
                   if (nowTimeStamp.difference(peakHourTimeStamp).inSeconds <
                           3600 &&
                       nowTimeStamp.difference(peakHourTimeStamp).inSeconds >=
@@ -434,7 +428,7 @@ void onStart(ServiceInstance service) async {
           DateTime.now().difference(DateTime.parse(element.utc)).inMinutes <
               0 &&
           element.status == "2") {
-        print("Spitzenstunde");
+        print("!!Spitzenstunde Notification sent!!");
 
         pref_getString(benachrichtigungsTextKey).then((value) {
           AwesomeNotifications().createNotification(
