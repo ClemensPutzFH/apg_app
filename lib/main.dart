@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -411,7 +412,7 @@ void onStart(ServiceInstance service) async {
             utc: DateTime.now().add(Duration(minutes: 61)).toUtc().toString(),
             status: "2"),
         StatusInfos(
-            utc: DateTime.now().add(Duration(minutes: 121)).toUtc().toString(),
+            utc: DateTime.now().add(Duration(minutes: 12)).toUtc().toString(),
             status: "2"),
         StatusInfos(
             utc: DateTime.now().add(Duration(minutes: 241)).toUtc().toString(),
@@ -479,7 +480,9 @@ int? getNextLastLocalSpitzenStundenHour(List<StatusInfos> spitzenstunden) {
       spitzenstunden.removeRange(0, spitzenstunden.indexOf(element));
       return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour + 1;
     }
+
     lastSpitzenStunde = element;
   }
+  spitzenstunden.removeRange(0, spitzenstunden.indexOf(lastSpitzenStunde));
   return DateTime.parse(lastSpitzenStunde.utc).toLocal().hour + 1;
 }
