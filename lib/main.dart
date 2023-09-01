@@ -21,7 +21,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool redTest = false;
-bool notificationTest = true;
+bool notificationTest = false;
 
 late SpitzenStundenObject spitzenStundenData;
 
