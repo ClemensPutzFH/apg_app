@@ -21,7 +21,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 bool redTest = false;
-bool notificationTest = false;
+bool notificationTest = true;
 
 late SpitzenStundenObject spitzenStundenData;
 
@@ -260,7 +260,24 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                       physics: AlwaysScrollableScrollPhysics(),
                     ));
               } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
+                //Error happend while fetching data
+                return Center(
+                    child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'lib/res/error.png',
+                      width: 100,
+                      height: 100,
+                    ),
+                    Text('Fehler bim laden...'),
+                    Container(
+                      height: 20,
+                    ),
+                    Text('${snapshot.error}'),
+                  ],
+                ));
               }
             }
 
@@ -412,7 +429,7 @@ void onStart(ServiceInstance service) async {
             utc: DateTime.now().add(Duration(minutes: 61)).toUtc().toString(),
             status: "2"),
         StatusInfos(
-            utc: DateTime.now().add(Duration(minutes: 12)).toUtc().toString(),
+            utc: DateTime.now().add(Duration(minutes: 121)).toUtc().toString(),
             status: "2"),
         StatusInfos(
             utc: DateTime.now().add(Duration(minutes: 241)).toUtc().toString(),
