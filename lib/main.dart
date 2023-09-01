@@ -261,8 +261,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ));
               } else if (snapshot.hasError) {
                 //Error happend while fetching data
-                return Center(
-                    child: Column(
+                return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -277,7 +276,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
                     Text('${snapshot.error}'),
                   ],
-                ));
+                );
               }
             }
 
