@@ -59,8 +59,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Spitzenstunden',
-      home: const MyHomePage(title: 'Spitzenstunden'),
+      title: 'APG Powermonitor',
+      home: const MyHomePage(title: 'APG Powermonitor'),
     );
   }
 }
