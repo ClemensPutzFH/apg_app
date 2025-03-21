@@ -42,6 +42,13 @@ dependencies:
   awesome_notifications: ^0.7.4+1
   flutter_background_service: ^2.4.6
   shared_preferences: ^2.1.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true  
+  ios: true  
+  image_path: "lib/res/logo.png"
+
 
 
 
