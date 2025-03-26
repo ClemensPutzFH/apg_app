@@ -61,6 +61,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'APG Powermonitor',
       home: const MyHomePage(title: 'APG Powermonitor'),
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+              color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+      ),
     );
   }
 }

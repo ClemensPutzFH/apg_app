@@ -1,11 +1,11 @@
 PODS:
-  - awesome_notifications (0.0.5):
+  - awesome_notifications (0.10.0):
     - Flutter
-    - IosAwnCore (= 0.7.3)
+    - IosAwnCore (~> 0.10.0)
   - Flutter (1.0.0)
   - flutter_background_service_ios (0.0.3):
     - Flutter
-  - IosAwnCore (0.7.3)
+  - IosAwnCore (0.10.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -14,7 +14,7 @@ DEPENDENCIES:
   - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - Flutter (from `Flutter`)
   - flutter_background_service_ios (from `.symlinks/plugins/flutter_background_service_ios/ios`)
-  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/ios`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 SPEC REPOS:
   trunk:
@@ -28,15 +28,15 @@ EXTERNAL SOURCES:
   flutter_background_service_ios:
     :path: ".symlinks/plugins/flutter_background_service_ios/ios"
   shared_preferences_foundation:
-    :path: ".symlinks/plugins/shared_preferences_foundation/ios"
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
-  awesome_notifications: d63d9a25f126860f9a600850d99772237895b3ba
-  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  awesome_notifications: dd5518ff1c80be03d4f1c40f04da9d9cc2a37af5
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_background_service_ios: e30e0d3ee69e4cee66272d0c78eacd48c2e94aac
-  IosAwnCore: 6494e0e174d49f04f513e8a002187be226889a37
+  IosAwnCore: 653786a911089012092ce831f2945cd339855a89
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
 
-PODFILE CHECKSUM: ef19549a9bc3046e7bb7d2fab4d021637c0c58a3
+PODFILE CHECKSUM: a01d4068e496172cd5f0c4baa78c7b8797440a24
 
-COCOAPODS: 1.12.0
+COCOAPODS: 1.16.2
